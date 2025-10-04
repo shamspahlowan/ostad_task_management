@@ -1,7 +1,9 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ostad_task_management/auth/presentation/views/pswd_reset_email_verify_view.dart';
+import 'package:ostad_task_management/auth/presentation/views/signup_view.dart';
 import 'package:ostad_task_management/auth/presentation/widgets/background.dart';
 import 'package:ostad_task_management/util/asset_paths.dart';
 
@@ -14,6 +16,32 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> {
   final _formKey = GlobalKey<FormState>();
+
+  void _navigateToPswdResetEmailView() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return PswdResetEmailVerifyView();
+        },
+      ),
+    );
+  }
+
+  TapGestureRecognizer? _navigateToSignupView() {
+    return TapGestureRecognizer()
+      ..onTap = () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) {
+              return SignupView();
+            },
+          ),
+        );
+      };
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,14 +83,15 @@ class _LoginViewState extends State<LoginView> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) {
-                                  return PswdResetEmailVerifyView();
-                                },
-                              ),
-                            );
+                            // this will take to the home screen
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) {
+                            //       return PswdResetEmailVerifyView();
+                            //     },
+                            //   ),
+                            // );
                           },
                           child: SvgPicture.asset(
                             AssetPaths.buttonIcon,
@@ -77,9 +106,12 @@ class _LoginViewState extends State<LoginView> {
                   ),
                 ),
                 SizedBox(height: 50),
-                Text(
-                  "Forgot password?",
-                  style: GoogleFonts.montserrat(color: Colors.grey),
+                InkWell(
+                  onTap: _navigateToPswdResetEmailView,
+                  child: Text(
+                    "Forgot password?",
+                    style: GoogleFonts.montserrat(color: Colors.grey),
+                  ),
                 ),
                 SizedBox(height: 20),
                 RichText(
@@ -93,6 +125,7 @@ class _LoginViewState extends State<LoginView> {
                       TextSpan(
                         text: "Signup",
                         style: GoogleFonts.montserrat(color: Colors.green),
+                        recognizer: _navigateToSignupView(),
                       ),
                     ],
                   ),

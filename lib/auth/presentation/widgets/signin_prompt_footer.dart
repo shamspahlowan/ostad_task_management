@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ostad_task_management/auth/presentation/views/signin_view.dart';
+import 'package:ostad_task_management/auth/presentation/views/login_view.dart';
 
 class SigninPromptFooter extends StatefulWidget {
   const SigninPromptFooter({super.key});
@@ -30,7 +30,7 @@ class _SigninPromptFooterState extends State<SigninPromptFooter> {
       context,
       MaterialPageRoute(
         builder: (context) {
-          return SigninView();
+          return LoginView();
         },
       ),
     );

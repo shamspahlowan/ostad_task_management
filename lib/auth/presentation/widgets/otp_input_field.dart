@@ -20,9 +20,7 @@ class _OtpInputFieldState extends State<OtpInputField> {
     _focusNode = FocusNode();
 
     _controller.addListener(() {
-      setState(() {
-        print(_controller.text);
-      });
+      setState(() {});
     });
 
     _focusNode.addListener(() {
