@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ostad_task_management/auth/presentation/views/pswd_reset_email_verify_view.dart';
 import 'package:ostad_task_management/auth/presentation/views/signup_view.dart';
 import 'package:ostad_task_management/auth/presentation/widgets/background.dart';
+import 'package:ostad_task_management/dashboard/presentation/dashboard_view.dart';
 import 'package:ostad_task_management/util/asset_paths.dart';
 
 class LoginView extends StatefulWidget {
@@ -25,6 +26,20 @@ class _LoginViewState extends State<LoginView> {
           return PswdResetEmailVerifyView();
         },
       ),
+    );
+  }
+
+  void _navigateDashboardView() {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return DashboardView();
+        },
+      ),
+      (predicate) {
+        return false;
+      },
     );
   }
 
@@ -82,17 +97,7 @@ class _LoginViewState extends State<LoginView> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () {
-                            // this will take to the home screen
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (context) {
-                            //       return PswdResetEmailVerifyView();
-                            //     },
-                            //   ),
-                            // );
-                          },
+                          onPressed: _navigateDashboardView,
                           child: SvgPicture.asset(
                             AssetPaths.buttonIcon,
                             colorFilter: ColorFilter.mode(

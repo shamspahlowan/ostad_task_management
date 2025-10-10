@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -12,12 +14,15 @@ class _OtpInputFieldState extends State<OtpInputField> {
   late final TextEditingController _controller;
   late final FocusNode _focusNode;
   bool isFocused = false;
+  int otp = 100000 + Random.secure().nextInt(900000); // 6-digit secure OTP
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController();
     _focusNode = FocusNode();
+
+    print(otp);
 
     _controller.addListener(() {
       setState(() {});
@@ -63,6 +68,52 @@ class _OtpInputFieldState extends State<OtpInputField> {
               keyboardType: TextInputType.number,
               maxLength: 6,
               autofocus: true,
+              textInputAction: TextInputAction.done,
+              onSubmitted: (value) {
+                if (_controller.text.length == 6 &&
+                    int.tryParse(_controller.text.toString()) == otp) {
+                  print(otp);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        "entered OTP is $value",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      backgroundColor: Colors.greenAccent,
+                      behavior:
+                          SnackBarBehavior.floating, // makes it float above UI
+                      margin: const EdgeInsets.all(16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        "entered OTP is invalid",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      backgroundColor: Colors.redAccent,
+                      behavior: SnackBarBehavior.floating,
+                      margin: const EdgeInsets.all(16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
+                  _focusNode.unfocus();
+                }
+              },
             ),
           ),
           Row(

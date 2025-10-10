@@ -15,6 +15,7 @@ class _AppState extends State<App> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        colorSchemeSeed: const Color(0xFF21BF73),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: const Color(0xEDF8F7FF),
