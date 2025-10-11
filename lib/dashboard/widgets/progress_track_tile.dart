@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ostad_task_management/shared/task_manager.dart';
 import 'package:ostad_task_management/shared/task_status_util.dart';
 
 class ProgressTrackTile extends StatefulWidget {
@@ -35,7 +36,9 @@ class _ProgressTrackTileState extends State<ProgressTrackTile> {
       child: Column(
         children: [
           Text(
-            "09",
+            TaskManager.getTaskCountByStatus(
+              widget.status,
+            ).toString().padLeft(2, "0"),
             style: GoogleFonts.montserrat(
               color: Colors.black,
               fontWeight: FontWeight.bold,

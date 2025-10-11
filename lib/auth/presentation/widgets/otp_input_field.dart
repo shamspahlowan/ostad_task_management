@@ -22,8 +22,6 @@ class _OtpInputFieldState extends State<OtpInputField> {
     _controller = TextEditingController();
     _focusNode = FocusNode();
 
-    print(otp);
-
     _controller.addListener(() {
       setState(() {});
     });
@@ -72,7 +70,6 @@ class _OtpInputFieldState extends State<OtpInputField> {
               onSubmitted: (value) {
                 if (_controller.text.length == 6 &&
                     int.tryParse(_controller.text.toString()) == otp) {
-                  print(otp);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(
