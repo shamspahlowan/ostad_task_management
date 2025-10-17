@@ -29,3 +29,5 @@ extension TaskStatusUtil on TaskStatus {
     }
   }
 }
+
+enum TaskFilter { all, newTask, progress, completed, cancelled }

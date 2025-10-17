@@ -6,7 +6,8 @@ import 'package:ostad_task_management/shared/task_status_util.dart';
 class TaskTile extends StatefulWidget {
   final TaskModel task;
   final VoidCallback? onTap;
-  const TaskTile({super.key, required this.task, this.onTap});
+  final VoidCallback? onDelete;
+  const TaskTile({super.key, required this.task, this.onTap, this.onDelete});
 
   @override
   State<TaskTile> createState() => _TaskTileState();
@@ -91,7 +92,7 @@ class _TaskTileState extends State<TaskTile> {
                 //   icon: Icon(Icons.edit_note_outlined),
                 // ),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: widget.onDelete,
                   icon: Icon(Icons.delete_forever_sharp),
                 ),
               ],

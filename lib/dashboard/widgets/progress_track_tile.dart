@@ -49,7 +49,7 @@ class _ProgressTrackTileState extends State<ProgressTrackTile> {
             widget.status.getLabel,
             style: GoogleFonts.montserrat(
               color: Colors.black,
-              fontWeight: FontWeight.w400,
+              fontWeight: FontWeight.w700,
               fontSize: 12,
             ),
           ),

@@ -16,6 +16,7 @@ class _AppState extends State<App> {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorSchemeSeed: const Color(0xFF21BF73),
+        scaffoldBackgroundColor: Colors.grey.shade100,
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: const Color(0xEDF8F7FF),
