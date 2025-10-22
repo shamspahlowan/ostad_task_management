@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ostad_task_management/auth/contorller/auth_controller.dart';
 import 'package:ostad_task_management/auth/presentation/views/login_view.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -12,7 +13,8 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _CustomAppBarState extends State<CustomAppBar> {
-  void _navigateLoginView() {
+  void _navigateLoginView() async {
+    await AuthController.clearUserData();
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(

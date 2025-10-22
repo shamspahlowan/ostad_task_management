@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:ostad_task_management/auth/contorller/auth_controller.dart';
 import 'package:ostad_task_management/auth/presentation/views/login_view.dart';
 import 'package:ostad_task_management/auth/presentation/widgets/background.dart';
+import 'package:ostad_task_management/dashboard/presentation/dashboard_view.dart';
 import 'package:ostad_task_management/util/asset_paths.dart';
 
 class SplashView extends StatefulWidget {
@@ -20,17 +22,28 @@ class _SplashViewState extends State<SplashView> {
 
   Future _moveToLoginView() async {
     await Future.delayed(Duration(seconds: 3));
-    if (!mounted) {
-      return;
+
+    final bool isLoggedIn = await AuthController.isUserAlreadyLoggedIn();
+    if (isLoggedIn) {
+      await AuthController.getUserData();
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) {
+            return DashboardView();
+          },
+        ),
+      );
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) {
+            return LoginView();
+          },
+        ),
+      );
     }
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (_) {
-          return LoginView();
-        },
-      ),
-    );
   }
 
   @override

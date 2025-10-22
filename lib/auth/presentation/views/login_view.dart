@@ -2,11 +2,17 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ostad_task_management/auth/contorller/auth_controller.dart';
 import 'package:ostad_task_management/auth/presentation/views/pswd_reset_email_verify_view.dart';
 import 'package:ostad_task_management/auth/presentation/views/signup_view.dart';
 import 'package:ostad_task_management/auth/presentation/widgets/background.dart';
 import 'package:ostad_task_management/dashboard/presentation/dashboard_view.dart';
+import 'package:ostad_task_management/shared/api_caller.dart';
+import 'package:ostad_task_management/shared/show_snackbar_message.dart';
 import 'package:ostad_task_management/util/asset_paths.dart';
+import 'package:ostad_task_management/util/urls.dart';
+import 'package:ostad_task_management/util/user_model.dart';
+import 'package:ostad_task_management/util/validator.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -17,6 +23,10 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> {
   final _formKey = GlobalKey<FormState>();
+  late final TextEditingController _emailController;
+  late final TextEditingController _pswdController;
+
+  bool _isLoginInProgress = false;
 
   void _navigateToPswdResetEmailView() {
     Navigator.push(
@@ -58,6 +68,20 @@ class _LoginViewState extends State<LoginView> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _emailController = TextEditingController();
+    _pswdController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _pswdController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -86,23 +110,35 @@ class _LoginViewState extends State<LoginView> {
                       ),
                       SizedBox(height: 15),
                       TextFormField(
+                        controller: _emailController,
                         decoration: InputDecoration(hintText: "Email"),
+                        validator: (value) => Validator.email(value),
                       ),
                       SizedBox(height: 10),
                       TextFormField(
+                        controller: _pswdController,
+                        validator: (value) =>
+                            Validator.password(value, minLength: 8),
                         obscureText: true,
                         decoration: InputDecoration(hintText: "Password"),
                       ),
                       SizedBox(height: 10),
                       SizedBox(
                         width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: _navigateDashboardView,
-                          child: SvgPicture.asset(
-                            AssetPaths.buttonIcon,
-                            colorFilter: ColorFilter.mode(
-                              Colors.white,
-                              BlendMode.srcIn,
+                        height: 38,
+                        child: Visibility(
+                          visible: _isLoginInProgress == false,
+                          replacement: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                          child: ElevatedButton(
+                            onPressed: _onSubmitButton,
+                            child: SvgPicture.asset(
+                              AssetPaths.buttonIcon,
+                              colorFilter: ColorFilter.mode(
+                                Colors.white,
+                                BlendMode.srcIn,
+                              ),
                             ),
                           ),
                         ),
@@ -141,5 +177,42 @@ class _LoginViewState extends State<LoginView> {
         ),
       ),
     );
+  }
+
+  void _onSubmitButton() {
+    if (_formKey.currentState!.validate()) {
+      _login();
+    }
+  }
+
+  Future<void> _login() async {
+    setState(() {
+      _isLoginInProgress = true;
+    });
+
+    Map<String, dynamic> json = {
+      "email": _emailController.text.trim(),
+      "password": _pswdController.text,
+    };
+
+    ApiResponse response = await ApiCaller.postRequest(
+      url: Urls.loginUrl,
+      body: json,
+    );
+
+    setState(() {
+      _isLoginInProgress = false;
+    });
+    if (response.isSccuess && response.body["status"] == "success") {
+      UserModel model = UserModel.fromJson(response.body["data"]);
+      await AuthController.saveUserData(model, response.body["token"]);
+      
+      ShowSnackbarMessage.showSnackBarMessage(context, "Welcome");
+      Future.delayed(Duration(seconds: 2), () {
+        _navigateDashboardView();
+      });
+    } else {
+      ShowSnackbarMessage.showSnackBarMessage(context, response.error!);
+    }
   }
 }

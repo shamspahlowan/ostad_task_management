@@ -1,16 +1,16 @@
 class UserModel {
   final String firstName;
   final String lastName;
-  final String password;
+  final String email;
   final String mobile;
-  final String profileUrl;
+  final String id;
 
   const UserModel({
     required this.firstName,
     required this.lastName,
-    required this.password,
+    required this.email,
     required this.mobile,
-    required this.profileUrl,
+    required this.id,
   });
 
   UserModel copyWith({
@@ -23,9 +23,9 @@ class UserModel {
     return UserModel(
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
-      password: password ?? this.password,
+      email: password ?? this.email,
       mobile: mobile ?? this.mobile,
-      profileUrl: profileUrl ?? this.profileUrl,
+      id: profileUrl ?? this.id,
     );
   }
 
@@ -33,9 +33,9 @@ class UserModel {
     return UserModel(
       firstName: json['firstName'] ?? '',
       lastName: json['lastName'] ?? '',
-      password: json['password'] ?? '',
+      email: json['password'] ?? '',
       mobile: json['mobile'] ?? '',
-      profileUrl: json['profileUrl'] ?? '',
+      id: json['profileUrl'] ?? '',
     );
   }
 
@@ -43,15 +43,15 @@ class UserModel {
     return {
       'firstName': firstName,
       'lastName': lastName,
-      'password': password,
+      'password': email,
       'mobile': mobile,
-      'profileUrl': profileUrl,
+      'profileUrl': id,
     };
   }
 
   @override
   String toString() {
-    return 'UserModel(firstName: $firstName, lastName: $lastName, mobile: $mobile, profileUrl: $profileUrl)';
+    return 'UserModel(firstName: $firstName, lastName: $lastName, mobile: $mobile, profileUrl: $id)';
   }
 
   @override
@@ -61,15 +61,15 @@ class UserModel {
           runtimeType == other.runtimeType &&
           firstName == other.firstName &&
           lastName == other.lastName &&
-          password == other.password &&
+          email == other.email &&
           mobile == other.mobile &&
-          profileUrl == other.profileUrl;
+          id == other.id;
 
   @override
   int get hashCode =>
       firstName.hashCode ^
       lastName.hashCode ^
-      password.hashCode ^
+      email.hashCode ^
       mobile.hashCode ^
-      profileUrl.hashCode;
+      id.hashCode;
 }

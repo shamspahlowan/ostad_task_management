@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ostad_task_management/shared/api_caller.dart';
+import 'package:ostad_task_management/shared/show_snackbar_message.dart';
 import 'package:ostad_task_management/shared/task_manager.dart';
 import 'package:ostad_task_management/shared/task_model.dart';
 import 'package:ostad_task_management/shared/task_status_util.dart';
 import 'package:ostad_task_management/util/asset_paths.dart';
+import 'package:ostad_task_management/util/urls.dart';
 
 class AddTaskView extends StatefulWidget {
   const AddTaskView({super.key});
@@ -16,6 +19,9 @@ class AddTaskView extends StatefulWidget {
 class _AddTaskViewState extends State<AddTaskView> {
   late TextEditingController _titleController;
   late TextEditingController _descriptionController;
+  final _formKey = GlobalKey<FormState>();
+
+  bool _isAddNewTaskInProgress = false;
 
   @override
   void initState() {
@@ -55,6 +61,7 @@ class _AddTaskViewState extends State<AddTaskView> {
                 ),
               ),
               Form(
+                key: _formKey,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -132,5 +139,27 @@ class _AddTaskViewState extends State<AddTaskView> {
         ),
       ),
     );
+  }
+
+  void _onSubmit() {}
+
+  Future<void> _addNewTask() async {
+    _isAddNewTaskInProgress = true;
+    setState(() {});
+    Map<String, dynamic> json = {
+      "title": _titleController.text.trim(),
+      "description": _descriptionController.text.trim(),
+      "status": "New",
+    };
+    final ApiResponse response = await ApiCaller.postRequest(
+      url: Urls.createTaskUrl,
+      body: json,
+    );
+
+    if (response.isSccuess) {
+      
+    } else {
+      ShowSnackbarMessage.showSnackBarMessage(context, response.error!);
+    }
   }
 }
