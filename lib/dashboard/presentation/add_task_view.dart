@@ -72,6 +72,12 @@ class _AddTaskViewState extends State<AddTaskView> {
                         filled: true,
                         fillColor: const Color(0xFFF0F1F1),
                       ),
+                      validator: (value) {
+                        if (value?.trim().isEmpty ?? false) {
+                          return "enter a valid title";
+                        }
+                        return null;
+                      },
                     ),
                     SizedBox(height: 10),
                     TextFormField(
@@ -81,52 +87,31 @@ class _AddTaskViewState extends State<AddTaskView> {
                         filled: true,
                         fillColor: const Color(0xFFF0F1F1),
                       ),
+                      validator: (value) {
+                        if (value?.trim().isEmpty ?? false) {
+                          return "enter a valid description";
+                        }
+                        return null;
+                      },
                       maxLines: 10,
                     ),
                     SizedBox(height: 15),
                     SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          DateTime now = DateTime.now();
-                          String date = "${now.day}/${now.month}/${now.year}";
-                          if (_titleController.text.isNotEmpty &&
-                              _descriptionController.text.isNotEmpty) {
-                            TaskManager.addTask(
-                              TaskModel(
-                                title: _titleController.text,
-                                description: _descriptionController.text,
-                                date: date,
-                                status: TaskStatus.newtask,
-                              ),
-                            );
-
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                elevation: 1,
-                                backgroundColor: Colors.green,
-                                content: Text("Task added successfully."),
-                                duration: Duration(seconds: 2),
-                              ),
-                            );
-                            Navigator.pop(context, true);
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                elevation: 1,
-                                backgroundColor: Colors.redAccent,
-                                content: Text(
-                                  "please add something to your task",
-                                ),
-                              ),
-                            );
-                          }
-                        },
-                        child: SvgPicture.asset(
-                          AssetPaths.buttonIcon,
-                          colorFilter: ColorFilter.mode(
-                            Colors.white,
-                            BlendMode.srcIn,
+                      height: 38,
+                      child: Visibility(
+                        visible: _isAddNewTaskInProgress == false,
+                        replacement: Center(child: CircularProgressIndicator()),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            _onSubmit();
+                          },
+                          child: SvgPicture.asset(
+                            AssetPaths.buttonIcon,
+                            colorFilter: ColorFilter.mode(
+                              Colors.white,
+                              BlendMode.srcIn,
+                            ),
                           ),
                         ),
                       ),
@@ -141,7 +126,34 @@ class _AddTaskViewState extends State<AddTaskView> {
     );
   }
 
-  void _onSubmit() {}
+  void _addNewTaskToList(
+    BuildContext context, {
+    required String title,
+    required String description,
+  }) {
+    DateTime now = DateTime.now();
+    String date = "${now.day}/${now.month}/${now.year}";
+    TaskManager.addTask(
+      TaskModel(
+        title: title,
+        description: description,
+        date: date,
+        status: TaskStatus.newtask,
+      ),
+    );
+    Navigator.pop(context, true);
+  }
+
+  void _onSubmit() {
+    if (_formKey.currentState!.validate()) {
+      _addNewTask();
+    }
+  }
+
+  void _clearTextfields() {
+    _descriptionController.clear();
+    _titleController.clear();
+  }
 
   Future<void> _addNewTask() async {
     _isAddNewTaskInProgress = true;
@@ -149,15 +161,26 @@ class _AddTaskViewState extends State<AddTaskView> {
     Map<String, dynamic> json = {
       "title": _titleController.text.trim(),
       "description": _descriptionController.text.trim(),
-      "status": "New",
+      "status": "new",
     };
     final ApiResponse response = await ApiCaller.postRequest(
       url: Urls.createTaskUrl,
       body: json,
     );
 
-    if (response.isSccuess) {
-      
+    _isAddNewTaskInProgress = false;
+    setState(() {});
+    if (response.isSccuess && response.statusCode == 200) {
+      _clearTextfields();
+      _addNewTaskToList(
+        context,
+        title: response.body["data"]["title"],
+        description: response.body["data"]["description"],
+      );
+      ShowSnackbarMessage.showSnackBarMessage(
+        context,
+        "Task successfully added",
+      );
     } else {
       ShowSnackbarMessage.showSnackBarMessage(context, response.error!);
     }

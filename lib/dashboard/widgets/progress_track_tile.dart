@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ostad_task_management/shared/task_manager.dart';
-import 'package:ostad_task_management/shared/task_status_util.dart';
 
 class ProgressTrackTile extends StatefulWidget {
-  final TaskStatus status;
-  const ProgressTrackTile({super.key, required this.status});
+  final String status;
+  final String count;
+  const ProgressTrackTile({
+    super.key,
+    required this.status,
+    required this.count,
+  });
 
   @override
   State<ProgressTrackTile> createState() => _ProgressTrackTileState();
@@ -19,7 +22,7 @@ class _ProgressTrackTileState extends State<ProgressTrackTile> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         gradient: RadialGradient(
-          colors: [widget.status.getColor, Colors.white],
+          colors: [Colors.white, Colors.white],
           center: Alignment.center,
           radius: 0.85,
         ),
@@ -36,9 +39,7 @@ class _ProgressTrackTileState extends State<ProgressTrackTile> {
       child: Column(
         children: [
           Text(
-            TaskManager.getTaskCountByStatus(
-              widget.status,
-            ).toString().padLeft(2, "0"),
+            widget.count.padLeft(2, "0"),
             style: GoogleFonts.montserrat(
               color: Colors.black,
               fontWeight: FontWeight.bold,
@@ -46,7 +47,7 @@ class _ProgressTrackTileState extends State<ProgressTrackTile> {
             ),
           ),
           Text(
-            widget.status.getLabel,
+            widget.status,
             style: GoogleFonts.montserrat(
               color: Colors.black,
               fontWeight: FontWeight.w700,

@@ -26,6 +26,7 @@ class _SplashViewState extends State<SplashView> {
     final bool isLoggedIn = await AuthController.isUserAlreadyLoggedIn();
     if (isLoggedIn) {
       await AuthController.getUserData();
+      
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(

@@ -26,3 +26,4 @@ class TaskModel {
   int get hashCode =>
       title.hashCode ^ description.hashCode ^ date.hashCode ^ status.hashCode;
 }
+ 

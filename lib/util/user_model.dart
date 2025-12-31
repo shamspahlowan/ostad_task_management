@@ -23,9 +23,9 @@ class UserModel {
     return UserModel(
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
-      email: password ?? this.email,
+      email: password ?? email,
       mobile: mobile ?? this.mobile,
-      id: profileUrl ?? this.id,
+      id: profileUrl ?? id,
     );
   }
 

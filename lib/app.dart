@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ostad_task_management/auth/presentation/views/splash_view.dart';
 
 class App extends StatefulWidget {
+  static GlobalKey<NavigatorState> navigator = GlobalKey();
   const App({super.key});
 
   @override

@@ -1,16 +1,27 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:logger/web.dart';
+import 'package:ostad_task_management/app.dart';
+import 'package:ostad_task_management/auth/contorller/auth_controller.dart';
+import 'package:ostad_task_management/auth/presentation/views/login_view.dart';
 
 class ApiCaller {
   static final Logger _logger = Logger();
+
   static Future<ApiResponse> getRequest({required String url}) async {
     try {
       Uri uri = Uri.parse(url);
       _logRequest(url);
 
-      Response response = await get(uri); // actual get request to the server
+      Response response = await get(
+        uri,
+        headers: {
+          "content-type": "application/json",
+          "token": AuthController.accessToken ?? "",
+        },
+      ); // actual get request to the server
       _logResponse(url, response);
 
       final int statusCode = response.statusCode;
@@ -18,6 +29,14 @@ class ApiCaller {
 
       if (response.statusCode == 200) {
         return ApiResponse(statusCode: statusCode, body: data, isSccuess: true);
+      } else if (statusCode == 401) {
+        await _moveToLogin();
+        return ApiResponse(
+          statusCode: statusCode,
+          body: null,
+          isSccuess: false,
+          error: "unauthorized",
+        );
       } else {
         return ApiResponse(
           statusCode: statusCode,
@@ -35,6 +54,15 @@ class ApiCaller {
     }
   }
 
+  static Future<void> _moveToLogin() async {
+    await AuthController.clearUserData();
+    Navigator.pushAndRemoveUntil(
+      App.navigator.currentContext!,
+      MaterialPageRoute(builder: (context) => LoginView()),
+      (route) => false,
+    );
+  }
+
   static Future<ApiResponse> postRequest({
     required String url,
     Map<String, dynamic>? body,
@@ -45,7 +73,10 @@ class ApiCaller {
 
       Response response = await post(
         uri,
-        headers: {"content-type": "application/json"},
+        headers: {
+          "content-type": "application/json",
+          "token": AuthController.accessToken ?? "",
+        },
         body: jsonEncode(body),
       ); // actual get request to the server
       _logResponse(url, response);
@@ -55,12 +86,20 @@ class ApiCaller {
 
       if (statusCode == 200 || response.statusCode == 201) {
         return ApiResponse(statusCode: statusCode, body: data, isSccuess: true);
+      } else if (statusCode == 401) {
+        await _moveToLogin();
+        return ApiResponse(
+          statusCode: statusCode,
+          body: null,
+          isSccuess: false,
+          error: "unauthorized",
+        );
       } else {
         return ApiResponse(
           statusCode: statusCode,
           body: data,
           isSccuess: false,
-          error: data["data"],
+          error: data["status"],
         );
       }
     } on Exception catch (e) {
@@ -76,7 +115,7 @@ class ApiCaller {
   static void _logRequest(String url, {Map<String, dynamic>? body}) {
     _logger.i(
       "Url => $url"
-      "Body => ${body!.isEmpty ? "No data was provided" : body}",
+      "Body => ${body == null ? "No body provided" : (body.isEmpty ? "Empty body" : body)}",
     );
   }
 
